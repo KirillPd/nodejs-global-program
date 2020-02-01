@@ -1,0 +1,24 @@
+CREATE TABLE users (
+    id text PRIMARY KEY,
+    login text,
+    password text,
+    age integer,
+    "isDeleted" boolean
+);
+
+CREATE UNIQUE INDEX users_pkey ON users(id text_ops);
+
+INSERT INTO "public"."users"("id","login","password","age","isDeleted")
+
+VALUES
+(E'1',E'test',E'test',22,FALSE),
+(E'2',E'test1',E'test',22,FALSE),
+(E'3',E'test2',E'test',22,FALSE),
+(E'4',E'test3',E'test',22,FALSE),
+(E'5',E'test4',E'test',22,FALSE),
+(E'6',E'test5',E'test',22,FALSE),
+(E'7',E'test6',E'test',22,FALSE),
+(E'8',E'test7',E'test',22,FALSE),
+(E'9',E'test8',E'test',22,TRUE),
+(E'10',E'test9',E'test',22,TRUE),
+(E'11',E'test10',E'test',22,TRUE);
