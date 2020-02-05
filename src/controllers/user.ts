@@ -1,30 +1,39 @@
 import { Request, Response } from "express";
 
 import { DataBase } from "../database";
-import { User } from "../models/User";
+import { User } from "../types/User";
 
-const db = new DataBase();
+// TODO: Use async/await instead of then
+export class UserController {
+  db: DataBase;
 
-export const addUser = (req: Request, res: Response) => {
-  db.addUser(req.body).then((id: string) => res.send(id));
-};
+  constructor(db: DataBase) {
+    this.db = db;
+  }
 
-export const updateUser = (req: Request, res: Response) => {
-  const { id, ...rest } = req.body;
-  db.updateUser(id, rest).then((user: User) => res.send(user));
-};
+  addUser = (req: Request, res: Response) => {
+    this.db.addUser(req.body).then((id: string) => res.send(id));
+  };
 
-export const getUser = (req: Request, res: Response) => {
-  const { id } = req.params;
-  db.getUser(id).then((user: User) => res.send(user));
-};
+  updateUser = (req: Request, res: Response) => {
+    const { id } = req.params;
+    this.db.updateUser(id, req.body).then((user: User) => res.send(user));
+  };
 
-export const deleteUser = (req: Request, res: Response) => {
-  const { id } = req.params;
-  db.deleteUser(id).then((isDeleted: boolean) => res.send(isDeleted));
-};
+  getUser = (req: Request, res: Response) => {
+    const { id } = req.params;
+    this.db.getUser(id).then((user: User) => res.send(user));
+  };
 
-export const getAutoSuggestUsers = (req: Request, res: Response) => {
-  const { loginSubstring, limit } = req.query;
-  db.getAutoSuggestUsers(loginSubstring, limit).then((users: User[]) => res.send(users));
-};
+  deleteUser = (req: Request, res: Response) => {
+    const { id } = req.params;
+    this.db.deleteUser(id).then((isDeleted: boolean) => res.send(isDeleted));
+  };
+
+  getAutoSuggestUsers = (req: Request, res: Response) => {
+    const { loginSubstring, limit } = req.query;
+    this.db
+      .getAutoSuggestUsers(loginSubstring.replace(/"/g, ''), limit)
+      .then((users: User[]) => res.send(users));
+  };
+}

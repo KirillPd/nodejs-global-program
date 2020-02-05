@@ -1,53 +1,94 @@
 import uuid from "uuid";
-import find from "lodash.find";
-import findIndex from "lodash.findIndex";
-import sortBy from "lodash.sortBy";
+import { Op, Options, Sequelize } from "sequelize";
+import { getUserModel } from '../models/User';
 
-import { User } from "../models/User";
+import { User } from "../types/User";
 
 interface DataBaseInterface {
-  users: User[];
+  sequelize?: Sequelize;
+}
+
+interface DataBaseInit {
+  config: Options;
+  tableName: string;
 }
 
 export class DataBase implements DataBaseInterface {
-  users: User[] = [];
+  sequelize: Sequelize;
+  tableName: string;
+  UserModel: any;
 
-  getUser(id: string): Promise<User | undefined> {
-    return Promise.resolve(find(this.users, { id }));
-  }
+  init = async ({ config, tableName }: DataBaseInit) => {
+    if (this.sequelize) {
+      return console.error("Database is already connected");
+    }
 
-  addUser(user: Omit<User, "id" | "isDeleted">): Promise<string> {
+    this.sequelize = new Sequelize(config);
+
+    try {
+      await this.sequelize.authenticate();
+      console.log("Connection has been established successfully.");
+    } catch (error) {
+      console.error("Unable to connect to the database:", error);
+    }
+
+    this.createModel();
+    this.tableName = tableName;
+  };
+
+  private createModel = () => {
+    this.UserModel = getUserModel(this.sequelize);
+  };
+
+  getUser = (id: string): Promise<User | undefined> => {
+    return this.UserModel.findOne({
+      where: {
+        id
+      }
+    });
+  };
+
+  addUser = (user: Omit<User, "id" | "isDeleted">): Promise<string> => {
     const id: string = uuid();
-    this.users.push({
+
+    return this.UserModel.create({
       ...user,
       id,
       isDeleted: false
     });
-    return Promise.resolve(id);
-  }
+  };
 
-  updateUser(id: string, data: Partial<User>): Promise<User> {
-    const usersCopy = this.users.slice();
-    const index = findIndex(this.users, { id });
-    const user = find(this.users, { id });
-    const updatedUser = { ...user, ...data };
+  updateUser = (id: string, data: Partial<User>): Promise<User> => {
+    return this.UserModel.update(data, {
+      where: {
+        id
+      }
+    });
+  };
 
-    usersCopy.splice(index, 1, updatedUser);
-
-    this.users = usersCopy;
-
-    return Promise.resolve(updatedUser);
-  }
-
-  deleteUser(id: string): Promise<boolean> {
+  deleteUser = (id: string): Promise<boolean> => {
+    // TODO: To force delete
+    // this.UserModel.destroy({
+    //   where: {
+    //     id
+    //   }
+    // });
     return this.updateUser(id, { isDeleted: true }).then(() => true);
-  }
+  };
 
-  getAutoSuggestUsers(loginSubstring: string, limit: number): Promise<User[]> {
-    return Promise.resolve(
-      sortBy(this.users, (user: User) => user.login)
-        .filter((user: User) => user.login.indexOf(loginSubstring) > -1)
-        .slice(0, limit)
-    );
-  }
+  getAutoSuggestUsers = (
+    loginSubstring: string,
+    limit: number
+  ): Promise<User[]> => {
+    console.log(loginSubstring);
+    return this.UserModel.findAll({
+      limit,
+      order: [["login", "DESC"]],
+      where: {
+        login: {
+          [Op.iLike]: `%${loginSubstring}%`
+        }
+      }
+    });
+  };
 }
