@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
 import { DataBase } from "../database";
-import { User } from "../models/User";
+import { User } from "../types/User";
 
 // TODO: Use async/await instead of then
 export class UserController {

@@ -1,7 +1,8 @@
 import uuid from "uuid";
-import { DataTypes, Op, Options, Sequelize } from "sequelize";
+import { Op, Options, Sequelize } from "sequelize";
+import { getUserModel } from '../models/User';
 
-import { User } from "../models/User";
+import { User } from "../types/User";
 
 interface DataBaseInterface {
   sequelize?: Sequelize;
@@ -17,46 +18,26 @@ export class DataBase implements DataBaseInterface {
   tableName: string;
   UserModel: any;
 
-  init = ({ config, tableName }: DataBaseInit) => {
+  init = async ({ config, tableName }: DataBaseInit) => {
     if (this.sequelize) {
       return console.error("Database is already connected");
     }
 
     this.sequelize = new Sequelize(config);
+
+    try {
+      await this.sequelize.authenticate();
+      console.log("Connection has been established successfully.");
+    } catch (error) {
+      console.error("Unable to connect to the database:", error);
+    }
+
     this.createModel();
     this.tableName = tableName;
   };
 
   private createModel = () => {
-    this.UserModel = this.sequelize.define(
-      "user",
-      {
-        id: {
-          type: DataTypes.STRING,
-          allowNull: false,
-          primaryKey: true
-        },
-        login: {
-          type: DataTypes.STRING,
-          allowNull: false
-        },
-        password: {
-          type: DataTypes.STRING,
-          allowNull: false
-        },
-        age: {
-          type: DataTypes.NUMBER,
-          allowNull: false
-        },
-        isDeleted: {
-          type: DataTypes.BOOLEAN,
-          allowNull: false
-        }
-      },
-      {
-        timestamps: false
-      }
-    );
+    this.UserModel = getUserModel(this.sequelize);
   };
 
   getUser = (id: string): Promise<User | undefined> => {

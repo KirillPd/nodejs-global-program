@@ -2,7 +2,7 @@ import express from "express";
 
 import { UserController } from "./controllers/user";
 import { DataBase } from "./database";
-import { schema, validate } from "./validation";
+import { initRoutes } from "./routes";
 
 const app = express();
 
@@ -16,22 +16,19 @@ app.use(express.json());
 
 const db = new DataBase();
 
-db.init({
-  config: {
-    host: app.get("db-host"),
-    port: app.get("db-port"),
-    username: app.get("db-user"),
-    dialect: "postgres"
-  },
-  tableName: app.get("db-users-table-name")
-});
+(async () =>
+  await db.init({
+    config: {
+      host: app.get("db-host"),
+      port: app.get("db-port"),
+      username: app.get("db-user"),
+      dialect: "postgres"
+    },
+    tableName: app.get("db-users-table-name")
+  }))();
 
 const userController = new UserController(db);
 
-app.post("/users", validate(schema), userController.addUser);
-app.patch("/users/:id", validate(schema), userController.updateUser);
-app.get("/users", userController.getAutoSuggestUsers);
-app.get("/users/:id", userController.getUser);
-app.delete("/users/:id", userController.deleteUser);
+initRoutes(app, userController);
 
 export default app;
