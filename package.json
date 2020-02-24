@@ -6,6 +6,8 @@
     "start": "node dist/server.js",
     "watch-node": "nodemon dist/server.js",
     "watch-ts": "tsc -w",
+    "migrate": "sequelize-cli db:migrate",
+    "seed": "sequelize-cli db:seed:all",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,6 +24,8 @@
     "@types/joi": "^14.3.4",
     "@types/node": "^13.1.6",
     "@types/uuid": "^3.4.6",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.20.0",
     "eslint": "^6.8.0",
     "nodemon": "^1.19.4",
     "ts-node": "^8.5.4",
@@ -32,7 +36,10 @@
     "joi": "^14.3.1",
     "pg": "^7.18.1",
     "pg-hstore": "^2.3.3",
+    "reflect-metadata": "^0.1.13",
     "sequelize": "^5.21.3",
+    "sequelize-cli": "^5.5.1",
+    "sequelize-typescript": "^1.1.0",
     "uuid": "^3.3.3"
   }
 }
