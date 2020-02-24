@@ -5,12 +5,19 @@ import { UserGroupService } from "../services/UserGroup";
 export class UserGroupController {
   static addUsersToGroup = async (
     req: Request,
-    res: Response
+    res: Response,
+    next: any
   ): Promise<any> => {
-    const {groupId, userIds} = req.query;
-    
-    return res.send(
-      await UserGroupService.addUsersToGroup(groupId, userIds)
-    );
+    try {
+      const { groupId, userIds } = req.query;
+      const data = await UserGroupService.addUsersToGroup(groupId, userIds);
+
+      if (!data) {
+        return res.status(400).send("Bad request");
+      }
+      return res.send(data);
+    } catch (error) {
+      next({ log: true, error });
+    }
   };
 }
