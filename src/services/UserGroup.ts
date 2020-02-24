@@ -7,7 +7,7 @@ const generateUsersToGroupData = (groupId: string, userIds: string[]) =>
     groupId
   }));
 
-export class UserGroupDataManager {
+export class UserGroupService {
   static addUsersToGroup = (
     groupId: string,
     userIds: string[]

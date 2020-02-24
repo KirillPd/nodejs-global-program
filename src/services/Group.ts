@@ -1,5 +1,3 @@
-import uuid from "uuid";
-
 import { Group } from "../types/Group";
 import { default as GroupModel } from "../database/models/Group";
 
@@ -15,12 +13,7 @@ export class GroupService {
   };
 
   static add = (group: Omit<Group, "id">): Promise<Group> => {
-    const id: string = uuid();
-
-    return GroupModel.create({
-      ...group,
-      id,
-    });
+    return GroupModel.create(group);
   };
 
   static update = (id: string, data: Partial<Group>): Promise<Group> => {

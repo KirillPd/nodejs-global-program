@@ -1,4 +1,3 @@
-import uuid from "uuid";
 import { Op } from "sequelize";
 
 import { default as UserModel } from "../database/models/User";
@@ -14,11 +13,8 @@ export class UserService {
   };
 
   static addUser = (user: Omit<User, "id" | "isDeleted">): Promise<string> => {
-    const id: string = uuid();
-
     return UserModel.create({
       ...user,
-      id,
       isDeleted: false
     });
   };

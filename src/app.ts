@@ -9,8 +9,12 @@ app.set("port", process.env.PORT || 3000);
 app.use(express.json());
 
 (async () => {
-  await sequelize.sync({ force: false });
-  initRoutes(app);
+  try {
+    await sequelize.sync({ force: false });
+    initRoutes(app);
+  } catch(error) {
+    console.log(error);
+  }
 })();
 
 export default app;
