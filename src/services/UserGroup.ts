@@ -8,12 +8,16 @@ const generateUsersToGroupData = (groupId: string, userIds: string[]) =>
   }));
 
 export class UserGroupService {
+  static Model: any;
+
   static addUsersToGroup = (
     groupId: string,
     userIds: string[]
   ): Promise<UserGroup[]> => {
-    return UserGroupModel.bulkCreate(
+    return UserGroupService.Model.bulkCreate(
       generateUsersToGroupData(groupId, userIds)
     );
   };
 }
+
+UserGroupService.Model = UserGroupModel;

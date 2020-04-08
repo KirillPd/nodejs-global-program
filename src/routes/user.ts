@@ -1,5 +1,5 @@
 import * as core from "express-serve-static-core";
-import { UserController } from "../controllers/user";
+import { UserController } from "../controllers";
 
 export const initUserRoutes = (app: core.Express): void => {
   app.post("/users", UserController.add);

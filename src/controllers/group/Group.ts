@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import { GroupService } from "../services/group";
+import { GroupService } from "../../services/group";
 
 export class GroupController {
   static add = async (req: Request, res: Response) => {

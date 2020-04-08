@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import { UserGroupService } from "../services/UserGroup";
+import { UserGroupService } from "../../services/UserGroup";
 
 export class UserGroupController {
   static addUsersToGroup = async (

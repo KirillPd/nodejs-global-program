@@ -1,6 +1,6 @@
 import * as core from "express-serve-static-core";
 
-import { GroupController } from "../controllers/group";
+import { GroupController } from "../controllers";
 
 export const initGroupRoutes = (app: core.Express): void => {
   app.post("/group", GroupController.add);
