@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 import { sequelize } from "./database/sequelize";
 import { initRoutes } from "./routes";
-import { checkToken } from "./middlwares/auth";
+import { checkToken } from "./middlewares/auth";
 
 dotenv.config();
 
